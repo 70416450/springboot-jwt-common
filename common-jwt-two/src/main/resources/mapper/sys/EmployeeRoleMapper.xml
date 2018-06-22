@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.sys.mapper.EmployeeRoleMapper">
+  <resultMap id="BaseResultMap" type="com.tzy.common.sys.model.EmployeeRole">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
+  </resultMap>
+  
+  <insert id="addRoles" >
+    insert into t_employee_role (employee_id, role_id)
+    values 
+    <foreach collection="roleList" item="roleId" index="index" separator=",">
+      (
+      #{employeeId},#{roleId}
+      )
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.sys.mapper.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.tzy.common.sys.model.Employee">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="scenic_area_id" jdbcType="BIGINT" property="scenicAreaId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="id_card_number" jdbcType="CHAR" property="idCardNumber" />
+    <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="job_number" jdbcType="VARCHAR" property="jobNumber" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="password" jdbcType="CHAR" property="password" />
+    <result column="salt" jdbcType="CHAR" property="salt" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_disabled" jdbcType="BIT" property="isDisabled" />
+    <result column="is_del" jdbcType="BIT" property="isDel" />
+  </resultMap>
+</mapper>

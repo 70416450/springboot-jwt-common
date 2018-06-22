@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tzy.common.biz.mapper.InfoEnclosureMapper">
+    <resultMap id="BaseResultMap" type="com.tzy.common.biz.model.InfoEnclosure">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="biz_enclosure_id" property="bizEnclosureId" jdbcType="BIGINT"/>
+        <result column="enclosure_id" property="enclosureId" jdbcType="BIGINT"/>
+        <result column="info_id" property="infoId" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+    </resultMap>
+
+    <insert id="createList" parameterType="list">
+        INSERT INTO info_enclosure (biz_enclosure_id, enclosure_id, info_id, is_del)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.bizEnclosureId,jdbcType=BIGINT},
+            #{item.enclosureId,jdbcType=BIGINT},
+            #{item.infoId,jdbcType=VARCHAR},
+            #{item.isDel,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <select id="selectByInfo" resultMap="com.tzy.common.biz.mapper.EnclosureMapper.BaseResultMap"
+            parameterType="long">
+        SELECT
+        e.enclosure_id,
+        e.upload_time,
+        e.file_number,
+        e.file_name,
+        e.file_storage_name,
+        e.file_size,
+        e.enclosure_path,
+        e.file_source,
+        e.upload_person,
+        e.is_del
+        FROM
+        info_enclosure AS ie
+        LEFT JOIN t_enclosure AS e ON ie.enclosure_id = e.enclosure_id
+        WHERE
+        ie.info_id = #{infoId}
+    </select>
+</mapper>

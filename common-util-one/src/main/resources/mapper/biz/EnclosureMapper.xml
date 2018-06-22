@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tzy.common.biz.mapper.EnclosureMapper">
+    <resultMap id="BaseResultMap" type="com.tzy.common.biz.model.Enclosure">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="enclosure_id" property="enclosureId" jdbcType="BIGINT"/>
+        <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP"/>
+        <result column="file_number" property="fileNumber" jdbcType="VARCHAR"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="file_storage_name" property="fileStorageName" jdbcType="VARCHAR"/>
+        <result column="file_size" property="fileSize" jdbcType="DOUBLE"/>
+        <result column="enclosure_path" property="enclosurePath" jdbcType="VARCHAR"/>
+        <result column="file_source" property="fileSource" jdbcType="VARCHAR"/>
+        <result column="upload_person" property="uploadPerson" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+    </resultMap>
+
+    <insert id="insertEnclosureList" parameterType="list">
+        INSERT INTO t_enclosure (enclosure_id, upload_time, file_number, file_name, file_storage_name, file_size, enclosure_path, file_source, upload_person, is_del)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.enclosureId,jdbcType=BIGINT},
+            #{item.uploadTime,jdbcType=BIGINT},
+            #{item.fileNumber,jdbcType=VARCHAR},
+            #{item.fileName,jdbcType=INTEGER},
+            #{item.fileStorageName,jdbcType=INTEGER},
+            #{item.fileSize,jdbcType=INTEGER},
+            #{item.enclosurePath,jdbcType=INTEGER},
+            #{item.fileSource,jdbcType=INTEGER},
+            #{item.uploadPerson,jdbcType=INTEGER},
+            #{item.isDel,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+</mapper>

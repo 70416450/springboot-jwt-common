@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.biz.mapper.StudentMapper">
+    <resultMap id="BaseResultMap" type="com.tzy.common.biz.model.Student">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="student_id" jdbcType="BIGINT" property="studentId"/>
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="gender" jdbcType="INTEGER" property="gender"/>
+        <result column="id_card" jdbcType="CHAR" property="idCard"/>
+        <result column="eyes_degree" jdbcType="DOUBLE" property="eyesDegree"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="bd" jdbcType="TIMESTAMP" property="bd"/>
+    </resultMap>
+    <resultMap id="BaseResultMapTwo" type="com.tzy.common.biz.vo.JoinVo.StudentJoinVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="student_id" jdbcType="BIGINT" property="studentId"/>
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="gender" jdbcType="INTEGER" property="gender"/>
+        <result column="id_card" jdbcType="CHAR" property="idCard"/>
+        <result column="eyes_degree" jdbcType="DOUBLE" property="eyesDegree"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="bd" jdbcType="TIMESTAMP" property="bd"/>
+        <result column="enclosure_count" property="enclosureCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        student_id,id,user_name,gender,id_card,eyes_degree,is_del,bd
+    </sql>
+
+
+    <select id="findAllLike" parameterType="com.tzy.common.biz.dto.biz.CommonSelectDto"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        t_student
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria != null">
+                    and CONCAT_WS(' ',
+                    IFNULL(student_id,''),
+                    IFNULL(id,''),
+                    IFNULL(user_name,''),
+                    IFNULL(gender,''),
+                    IFNULL(id_card,''),
+                    IFNULL(eyes_degree,''),
+                    IFNULL(bd,'')
+                    ) like CONCAT('%', #{queryCriteria}, '%')
+                </if>
+                and is_del = 0
+            </trim>
+        </where>
+    </select>
+
+    <insert id="addList" parameterType="list">
+        INSERT INTO t_student (student_id, id, user_name, gender, id_card, eyes_degree, is_del, bd)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.studentId,jdbcType=BIGINT},
+            #{item.id,jdbcType=BIGINT},
+            #{item.userName,jdbcType=VARCHAR},
+            #{item.gender,jdbcType=INTEGER},
+            #{item.idCard,jdbcType=CHAR},
+            #{item.eyesDegree,jdbcType=DOUBLE},
+            #{item.isDel,jdbcType=BIT},
+            #{item.bd,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <update id="updateList" parameterType="list">
+        UPDATE t_student
+        <trim prefix="set" suffixOverrides=",">
+
+            <trim prefix="id = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.id!=null">
+                        when student_id=#{item.studentId} then #{item.id,jdbcType=BIGINT}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="user_name = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.userName!=null">
+                        when student_id=#{item.studentId} then #{item.userName,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="gender = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.gender!=null">
+                        when student_id=#{item.studentId} then #{item.gender,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="id_card = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.idCard!=null">
+                        when student_id=#{item.studentId} then #{item.idCard,jdbcType=CHAR}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="eyes_degree = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.eyesDegree!=null">
+                        when student_id=#{item.studentId} then #{item.eyesDegree,jdbcType=DOUBLE}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="is_del = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.isDel!=null">
+                        when student_id=#{item.studentId} then #{item.isDel,jdbcType=BIT}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="bd = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.bd!=null">
+                        when student_id=#{item.studentId} then #{item.bd,jdbcType=TIMESTAMP}
+                    </if>
+                </foreach>
+            </trim>
+
+
+        </trim>
+        where student_id in
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item.studentId}
+        </foreach>
+    </update>
+
+
+    <select id="selectInfoEnclosureList" parameterType="map" resultMap="BaseResultMapTwo">
+        SELECT
+        <include refid="Base_Column_List"/>
+        ,(SELECT Count(info.biz_enclosure_id) FROM info_enclosure AS info
+        WHERE
+        info.info_id = t_student.id
+        AND info.is_del = 0) AS enclosure_count
+        FROM
+        t_student
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria!=null">
+                    AND CONCAT_WS(' ',
+                    IFNULL(student_id,''),
+                    IFNULL(id,''),
+                    IFNULL(user_name,''),
+                    IFNULL(gender,''),
+                    IFNULL(id_card,''),
+                    IFNULL(eyes_degree,''),
+                    IFNULL(bd,'')
+                    ) LIKE '%${queryCriteria}%'
+                </if>
+                <if test="isDel != null">
+                    and is_del = #{isDel}
+                </if>
+                <if test="ids != null">
+                    AND student_id IN
+                    <foreach collection="ids" separator="," item="item" open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </trim>
+        </where>
+
+    </select>
+</mapper>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.biz.mapper.TclassMapper">
+    <resultMap id="BaseResultMap" type="com.tzy.common.biz.model.Tclass">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+    </resultMap>
+    <resultMap id="BaseResultMapTwo" type="com.tzy.common.biz.vo.JoinVo.TclassJoinVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="enclosure_count" property="enclosureCount" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,user_name,is_del
+    </sql>
+
+    <select id="findAllLike" parameterType="com.tzy.common.biz.dto.biz.CommonSelectDto"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        t_tclass
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria != null">
+                    and CONCAT_WS(' ',
+                    IFNULL(id,''),
+                    IFNULL(user_name,'')
+                    ) like CONCAT('%', #{queryCriteria}, '%')
+                </if>
+                and is_del = 0
+            </trim>
+        </where>
+    </select>
+
+    <insert id="addList" parameterType="list">
+        INSERT INTO t_tclass (id, user_name, is_del)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id,jdbcType=BIGINT}, #{item.userName,jdbcType=VARCHAR},
+            #{item.isDel,jdbcType=BIT})
+        </foreach>
+    </insert>
+
+    <update id="updateList" parameterType="list">
+        UPDATE t_tclass
+        <trim prefix="set" suffixOverrides=",">
+
+            <trim prefix="user_name =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.userName!=null">
+                        when id=#{item.id} then #{item.userName,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+
+        </trim>
+        where id in
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+
+    <resultMap id="BaseResultMapJoin" type="com.tzy.common.biz.model.Tclass">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+
+
+        <!-- property表示集合类型属性名称(需要在POJO中加入这个名字的集合)，ofType表示集合中的对象是什么类型 column根据字段名 select再次查询-->
+        <collection column="id" javaType="ArrayList" ofType="com.tzy.common.biz.model.Student"
+                    property="students" select="selectStudents">
+            <id column="student_id" jdbcType="BIGINT" property="studentId"/>
+            <result column="id" jdbcType="BIGINT" property="id"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+            <result column="gender" jdbcType="INTEGER" property="gender"/>
+            <result column="id_card" jdbcType="CHAR" property="idCard"/>
+            <result column="eyes_degree" jdbcType="DOUBLE" property="eyesDegree"/>
+            <result column="is_del" jdbcType="BIT" property="isDel"/>
+            <result column="bd" jdbcType="TIMESTAMP" property="bd"/>
+        </collection>
+    </resultMap>
+
+    <!--查询字表，对应上面的resultMap 字表的结果集-->
+    <select id="selectStudents" parameterType="Long"
+            resultMap="com.tzy.common.biz.mapper.StudentMapper.BaseResultMap">
+        SELECT
+          student_id,id,user_name,gender,id_card,eyes_degree,is_del,bd
+        FROM
+          t_student
+        WHERE id = #{id,jdbcType=BIGINT}
+        AND is_del = 0
+    </select>
+
+
+    <select id="findAllLikeJoinStudent" parameterType="com.tzy.common.biz.dto.biz.CommonSelectDto"
+            resultMap="BaseResultMapJoin">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        t_tclass
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria != null">
+                    and CONCAT_WS(' ',
+                    IFNULL(id,''),
+                    IFNULL(user_name,'')
+                    ) like CONCAT('%', #{queryCriteria}, '%')
+                </if>
+                and is_del = 0
+            </trim>
+        </where>
+    </select>
+
+    <select id="selectInfoEnclosureList" parameterType="map" resultMap="BaseResultMapTwo">
+        SELECT
+        <include refid="Base_Column_List"/>
+        ,(SELECT Count(info.biz_enclosure_id) FROM info_enclosure AS info
+        WHERE
+        info.info_id = t_tclass.id
+        AND info.is_del = 0) AS enclosure_count
+        FROM
+        t_tclass
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria!=null">
+                    AND CONCAT_WS(' ',
+                    IFNULL(id,''),
+                    IFNULL(user_name,'')
+                    ) LIKE '%${queryCriteria}%'
+                </if>
+                <if test="isDel != null">
+                    and is_del = #{isDel}
+                </if>
+                <if test="ids != null">
+                    AND id IN
+                    <foreach collection="ids" separator="," item="item" open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </trim>
+        </where>
+
+    </select>
+
+    <resultMap id="BaseResultMapJoinChild" type="com.tzy.common.biz.vo.JoinVo.TclassJoinVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="enclosure_count" property="enclosureCount" jdbcType="INTEGER"/>
+
+        <!-- property表示集合类型属性名称(需要在POJO中加入这个名字的集合)，ofType表示集合中的对象是什么类型 column根据字段名 select再次查询-->
+        <collection column="id" javaType="ArrayList" ofType="com.tzy.common.biz.vo.JoinVo.StudentJoinVo"
+                    property="studentJoinVos" select="selectStudentsVo">
+            <id column="student_id" jdbcType="BIGINT" property="studentId"/>
+            <result column="id" jdbcType="BIGINT" property="id"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+            <result column="gender" jdbcType="INTEGER" property="gender"/>
+            <result column="id_card" jdbcType="CHAR" property="idCard"/>
+            <result column="eyes_degree" jdbcType="DOUBLE" property="eyesDegree"/>
+            <result column="is_del" jdbcType="BIT" property="isDel"/>
+            <result column="bd" jdbcType="TIMESTAMP" property="bd"/>
+            <result column="enclosure_count" property="enclosureCount" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+    <!--查询字表，对应上面的BaseResultMapJoinChild 字表的结果集-->
+    <select id="selectStudentsVo" parameterType="Long"
+            resultMap="com.tzy.common.biz.mapper.StudentMapper.BaseResultMapTwo">
+        SELECT
+          student_id,id,user_name,gender,id_card,eyes_degree,is_del,bd,
+          (SELECT Count(info.biz_enclosure_id) FROM info_enclosure AS info
+        WHERE
+        info.info_id = t_student.id
+        AND info.is_del = 0) AS enclosure_count
+        FROM
+          t_student
+        WHERE id = #{id,jdbcType=BIGINT}
+        AND is_del = 0
+    </select>
+    <select id="selectInfoJoinChildEnclosureList" parameterType="map" resultMap="BaseResultMapJoinChild">
+        SELECT
+        <include refid="Base_Column_List"/>
+        ,(SELECT Count(info.biz_enclosure_id) FROM info_enclosure AS info
+        WHERE
+        info.info_id = t_tclass.id
+        AND info.is_del = 0) AS enclosure_count
+        FROM
+        t_tclass
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="queryCriteria!=null">
+                    AND CONCAT_WS(' ',
+                    IFNULL(id,''),
+                    IFNULL(user_name,'')
+                    ) LIKE '%${queryCriteria}%'
+                </if>
+                <if test="isDel != null">
+                    and is_del = #{isDel}
+                </if>
+                <if test="ids != null">
+                    AND id IN
+                    <foreach collection="ids" separator="," item="item" open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </trim>
+        </where>
+
+    </select>
+</mapper>

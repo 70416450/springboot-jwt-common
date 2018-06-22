@@ -1,0 +1,84 @@
+#databasespring:spring:
+spring:
+  application:
+    # 服务名称
+    name: myTest
+  datasource:
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置，应用到上面所有数据源中
+    # 初始化大小，最小，最大
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+#      filters: stat,log4j,config
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;
+    url: jdbc:mysql://localhost:3306/mytest?characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+  jackson:
+#    default-property-inclusion: non_null  jackson转化时间有时区限制
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+08
+  #环境日志配置 dev test prod
+  profiles:
+    active: dev
+# FREEMARKER (FreeMarkerAutoConfiguration)
+#  freemarker:
+#    allow-request-override: false
+#    cache: false
+#    check-template-location: true
+#    charset: utf-8
+#    content-type: text/html
+#    expose-request-attributes: false
+#    expose-session-attributes: false
+#    expose-spring-macro-helpers: false
+#    suffix: .ftl
+#    template-loader-path: classpath:/templates/
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+mapper:
+    mappers:
+        - com.tzy.common.lib.MyBaseMapper
+    not-empty: false
+    identity: mysql
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: false
+    params: count=countSql
+server:
+  port: 8090
+
+# 自定义键值对                         @Value("${message.data.file.path}")
+# 项目里spring管理的bean中这么使用       private String oldFilePath;
+message:
+  data:
+    file:
+      path: D:\templates\
+

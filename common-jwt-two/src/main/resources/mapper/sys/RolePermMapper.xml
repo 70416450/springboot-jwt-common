@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.sys.mapper.RolePermMapper">
+  <resultMap id="BaseResultMap" type="com.tzy.common.sys.model.RolePerm">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
+    <id column="perm_id" jdbcType="BIGINT" property="permId" />
+  </resultMap>
+
+  <insert id="addPerms" >
+    insert into t_role_perm (role_id, perm_id)
+    values
+    <foreach collection="permList" item="permId" index="index" separator=",">
+      (
+      #{roleId},#{permId}
+      )
+    </foreach>
+  </insert>
+</mapper>

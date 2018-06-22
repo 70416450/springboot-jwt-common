@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传 Demo</title>
+    <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+</head>
+<body>
+<h1>文件上传</h1>
+<form action="/student/upload" method="post" enctype="multipart/form-data" id="form1">
+    <input type="text" name="infoIds" value="5471374410122240"/>
+    <input type="text" name="infoIds" value="5471376268166144"/>
+    选择文件：<input type="file" name="file"/>
+    <input type="submit" value="表单提交"/>
+    <!--<input type="button" value="ajax提交" onclick="fileupload()">-->
+</form>
+
+<hr>
+<h1>文件上传</h1>
+<form action="/student/uploadSingle" method="post" enctype="multipart/form-data" id="form2">
+    选择文件：<input type="file" name="file"/>
+    <input type="submit" value="表单提交"/>
+</form>
+<hr>
+<h1>学生excle导入</h1>
+<form action="/student/importExcel" method="post" enctype="multipart/form-data" id="form3">
+    选择文件：<input type="file" name="file"/>
+    <input type="submit" value="表单提交"/>
+</form>
+<hr>
+<!--<form action="/doseLose/export?isExportAll=false&&ids=5391556515791872,5391556910318592" method="post" id="form2">
+    <input type="submit" value="丢失测试下载excel"/>
+</form>-->
+</body>
+</html>
+<script>
+    function fileupload() {
+        var form = document.getElementById("form1");
+        var formFile = new FormData(form);
+        $.ajax({
+            url: "http://localhost/healthCheckReport/fileUpload",
+            data: formFile,
+            type: "Post",
+            dataType: "json",
+            cache: false,//上传文件无需缓存
+            processData: false,//用于对data参数进行序列化处理 这里必须false
+            contentType: false, //必须
+            success: function (result) {
+                console.log(result);
+                if (result.code == 200) {
+                    var fileIds = result.data;
+                    var fileIdsArr = fileIds.join(',');
+                    console.log(fileIds);
+                    console.log(fileIdsArr);
+                    // var healthCheckReportVo = {};
+                    // healthCheckReportVo.idCardNumber = "510305178705053717";
+                    // healthCheckReportVo.fileIds = fileIdsArr;
+                    // test(healthCheckReportVo)
+                }
+            },
+            error: function () {
+                alert("异常！");
+            }
+        });
+    }
+
+    function test(healthCheckReportVo) {
+        $.ajax({
+            url: "http://localhost/healthCheckReport",
+            data: healthCheckReportVo,
+            type: "post",
+            dataType: "json",
+            contentType: 'application/json',
+            success: function (result1) {
+                console.log(result1);
+                if (result1.code == 200) {
+                    console.log("success")
+                    alert("success");
+                } else {
+                }
+            },
+            error: function () {
+                alert("异常！");
+            }
+        });
+    }
+
+</script>

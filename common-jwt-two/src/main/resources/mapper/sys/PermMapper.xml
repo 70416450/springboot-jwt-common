@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzy.common.sys.mapper.PermMapper">
+  <resultMap id="BaseResultMap" type="com.tzy.common.sys.model.Perm">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="perm_id" jdbcType="BIGINT" property="permId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="perm_name" jdbcType="VARCHAR" property="permName" />
+    <result column="perm_url" jdbcType="VARCHAR" property="permUrl" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="is_disabled" jdbcType="BIT" property="isDisabled" />
+    <result column="is_del" jdbcType="BIT" property="isDel" />
+  </resultMap>
+
+    <select id="selectPermList" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+            t_perm.perm_id,
+            t_perm.parent_id,
+            t_perm.perm_name,
+            t_perm.perm_url,
+            t_perm.method
+        FROM
+            t_perm
+        LEFT JOIN t_role_perm ON t_role_perm.perm_id = t_perm.perm_id
+        LEFT JOIN t_role ON t_role_perm.role_id = t_role.role_id
+        LEFT JOIN t_employee_role ON t_employee_role.role_id = t_role.role_id
+        LEFT JOIN t_employee ON t_employee_role.employee_id = t_employee.employee_id
+        WHERE
+            t_employee.employee_id = #{employeeId}
+            <if test="parentId != null">
+                and t_perm.parent_id = #{parentId}
+            </if>
+            and t_perm.is_disabled = false and t_perm.is_del = false
+  </select>
+</mapper>

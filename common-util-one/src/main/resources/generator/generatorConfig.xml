@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <properties resource="generator/config.properties"/>
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <plugin type="${mapper.plugin}">
+            <property name="mappers" value="${mapper.Mapper}"/>
+        </plugin>
+
+        <jdbcConnection driverClass="${jdbc.driverClass}" connectionURL="${jdbc.url}" userId="${jdbc.user}"
+                        password="${jdbc.password}"/>
+        <!--bean-->
+        <javaModelGenerator targetPackage="com.tzy.common.biz.model" targetProject="src/main/java"/>
+        <!--xml-->
+        <sqlMapGenerator targetPackage="mapper/biz/" targetProject="src/main/resources"/>
+        <!--mapper-->
+        <javaClientGenerator targetPackage="com.tzy.common.biz.mapper" targetProject="src/main/java"
+                             type="XMLMAPPER"/>
+
+        <!--表名 实体类名-->
+        <table tableName="t_student" domainObjectName="Student"/>
+        <table tableName="t_tclass" domainObjectName="Tclass"/>
+        <table tableName="info_enclosure" domainObjectName="InfoEnclosure"/>
+        <table tableName="t_enclosure" domainObjectName="Enclosure"/>
+
+    </context>
+</generatorConfiguration>
